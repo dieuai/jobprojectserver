@@ -14,10 +14,6 @@ try {
     var mywork = require('./routes/Crawler/mywork.js');
     var vietnamworks = require('./routes/Crawler/vietnamworks');
     var intership = require('./routes/Crawler/intership');
-    var Job_Type = require('./routes/Job_Management/Job_Type');
-    var Job_Position = require('./routes/Job_Management/Job_Position');
-    var Job_Salary = require('./routes/Job_Management/Job_Salary');
-    var Job_Location = require('./routes/Job_Management/Job_Location');
 }
 catch (err) {
     console.log('err:', err);
@@ -38,10 +34,6 @@ try {
     app.use('/',mywork);
     app.use('/',vietnamworks);
     app.use('/',intership);
-    app.use('/',Job_Type);
-    app.use('/',Job_Position);
-    app.use('/',Job_Salary);
-    app.use('/',Job_Location);
 }
 catch (err) {
     console.log('err', err);
