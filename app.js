@@ -3,6 +3,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var cors = require('cors');
 var compression = require('compression');
+var async = require('async');
 
 try {
     var config = require("./configs/config");
@@ -27,12 +28,12 @@ app.use(cookieParser());
 app.use(cors());
 
 try {
-    app.use('/',vieclam24h);
+    //app.use('/',vieclam24h);
     app.use('/',timviecnhanh);
     app.use('/',query);
     app.use('/',careerbuilder);
     app.use('/',mywork);
-    app.use('/',vietnamworks);
+    //app.use('/',vietnamworks);
     app.use('/',intership);
 }
 catch (err) {
@@ -88,9 +89,35 @@ io.on('connection', function (socket) {
 
 });
 
-
 http.listen(config.production_port, function () {
     console.log('ITJob running on port: ' + config.production_port);
 });
+
+setInterval(function(){
+    autoCrawler();
+}, 60000);
+
+function autoCrawler(){
+    var date = new Date();
+    if(date.getHours() == 23 && date.getMinutes() == 59){
+        async.waterfall([
+            function (next){
+                vietnamworks.vietnamworks(next);
+            },
+
+            function (next){
+                vieclam24h.vieclam24h(next);
+            },
+
+            function (next){
+                timviecnhanh.timviecnhanh(next);
+            },
+
+            function (next){
+                mywork.mywork(next);
+            }
+        ]);
+    }
+};
 
 module.exports = app;
