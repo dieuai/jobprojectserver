@@ -99,7 +99,7 @@ setInterval(function(){
 
 function autoCrawler(){
     var date = new Date();
-    if(date.getHours() == 23 && date.getMinutes() == 59){
+    if(date.getHours() == 22 && date.getMinutes() == 31){
         async.waterfall([
             function (next){
                 vietnamworks.vietnamworks(next);
