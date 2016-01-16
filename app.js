@@ -93,13 +93,13 @@ http.listen(config.production_port, function () {
     console.log('ITJob running on port: ' + config.production_port);
 });
 
-setInterval(function(){
+// setInterval(function(){
     autoCrawler();
-}, 60000);
+// }, 60000);
 
 function autoCrawler(){
     var date = new Date();
-    if(date.getHours() == 22 && date.getMinutes() == 34){
+    // if(date.getHours() == 22 && date.getMinutes() == 34){
         async.waterfall([
             function (next){
                 vietnamworks.vietnamworks(next);
@@ -117,7 +117,7 @@ function autoCrawler(){
                 mywork.mywork(next);
             }
         ]);
-    }
+    // }
 };
 
 module.exports = app;
