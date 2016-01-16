@@ -89,9 +89,7 @@ io.on('connection', function (socket) {
 
 });
 
-http.listen(config.production_port, function () {
-    console.log('ITJob running on port: ' + config.production_port);
-});
+http.listen(process.env.PORT || 5000);
 
 // setInterval(function(){
     autoCrawler();
