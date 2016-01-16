@@ -5,27 +5,21 @@ var cheerio = require('cheerio');
 var urls = [];
 var check = [];
 var Job = require('../../models/Jobs');
+var Log = require('../../models/Logs');
 request = request.defaults({
     jar: true
 });
 var j = request.jar();
+var number_job = [];
+var error_job = [];
 
-//begining();
-
-function begining() {
-    var durl = ['https://vieclam24h.vn/tim-kiem-viec-lam-nhanh/?hdn_nganh_nghe_cap1=74&hdn_dia_diem=&hdn_tu_khoa=&hdn_hinh_thuc=&hdn_cap_bac=&page=', 'https://vieclam24h.vn/tim-kiem-viec-lam-nhanh/?hdn_nganh_nghe_cap1=74&hdn_dia_diem=&hdn_tu_khoa=&hdn_hinh_thuc=&hdn_cap_bac=&page=', 'https://vieclam24h.vn/tim-kiem-viec-lam-nhanh/?hdn_nganh_nghe_cap1=77&hdn_dia_diem=&hdn_tu_khoa=&hdn_hinh_thuc=&hdn_cap_bac=&page='];
-    for (var i = 0; i < durl.length; i++) {
-        vieclam(durl[i]);
-    }
-}
-
-function vieclam(url) {
+function vieclam(url, report, next) {
     for (var k = 1; k < 80; k++) {
-        getURL(url, k);
+        getURL(url, k, report, next);
     }
 }
 
-function getURL(url, k) {
+function getURL(url, k, report, next) {
     request(url + k, function (err1, resp1, body1) {
         check.push('1');
         if (!err1 && resp1.statusCode == 200) {
@@ -46,8 +40,9 @@ function getURL(url, k) {
             });
             if (urls.length != 0 && check.length == 235) {
                 console.log(urls.length);//1384 - 347
+                report['number_url'] = urls.length;
                 for (var i = 0; i < urls.length; i++) {
-                    getLinks(urls[i]);
+                    getLinks(urls[i], report, next);
                 }
             }
         }
@@ -103,7 +98,7 @@ function getURL(url, k) {
 //
 //};
 
-function getLinks(url) {
+function getLinks(url, report, next) {
 
     var job = {
         page: 'vieclam24h.vn',
@@ -113,7 +108,7 @@ function getLinks(url) {
     request({
         url: url,
         headers: {
-            'Cookie': 'PHPSESSID=fk5ibub4qnnnf2p0utvjuo0c02; _gat=1; _gat_24h=1; _gat_NTD=1; _gat_vl=1; SvID=w100|Vn+Gr|Vn95U; _gat_ntv=1; _ga=GA1.2.1629896616.1450099087; gate=vlcm; _gali=btnLogin; uid=3163898',
+            'Cookie': 'PHPSESSID=6ms99rk6qo0e5998rrk1ecld95; _gat=1; _gat_24h=1; _gat_ntv=1; _gat_vl=1; uid=3163898; SvID=w100|VppMH|VppMC; _ga=GA1.2.1629896616.1450099087; gate=vlcm',
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'
         },
         jar: j
@@ -230,14 +225,44 @@ function getLinks(url) {
                 });
             });
         }
+        else {
+            error_job.push('1');
+        }
         if (Object.keys(job).length > 10) {
+            number_job.push('1');
             var result = new Job(job);
             result.save(function (err) {
                 if (err) return console.error(err);
-                console.log('xong');
             });
+        }
+        else {
+            error_job.push('1');
+        }
+        console.log(number_job.length + error_job.length);
+        if((number_job.length + error_job.length) == urls.length){
+            report['number_job'] = number_job.length;
+            report['error_job'] = error_job.length;
+            report['date'] = new Date();
+            if(Object.keys(report).length == 5){
+                var log = new Log(report);
+                log.save(function(err){
+                    if(err) return console.error(err);
+                    next();
+                });
+            }
         }
     })
 }
 
-module.exports = router;
+module.exports = {
+    vieclam24h: function (next) {
+        console.log('2');
+        var report = {
+            page: 'vieclam24h'
+        };
+        var durl = ['https://vieclam24h.vn/tim-kiem-viec-lam-nhanh/?hdn_nganh_nghe_cap1=74&hdn_dia_diem=&hdn_tu_khoa=&hdn_hinh_thuc=&hdn_cap_bac=&page=', 'https://vieclam24h.vn/tim-kiem-viec-lam-nhanh/?hdn_nganh_nghe_cap1=74&hdn_dia_diem=&hdn_tu_khoa=&hdn_hinh_thuc=&hdn_cap_bac=&page=', 'https://vieclam24h.vn/tim-kiem-viec-lam-nhanh/?hdn_nganh_nghe_cap1=77&hdn_dia_diem=&hdn_tu_khoa=&hdn_hinh_thuc=&hdn_cap_bac=&page='];
+        for (var i = 0; i < durl.length; i++) {
+            vieclam(durl[i], report, next);
+        }
+    }
+};
