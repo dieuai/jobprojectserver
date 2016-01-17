@@ -8,6 +8,7 @@ var Log = require('../../models/Logs');
 var check = [];
 var number_job = [];
 var error_job = [];
+var MAX = 100;
 
 function viecLam(url, i, report, next) {
     request(url + i, function (err1, resp1, body) {
@@ -19,8 +20,8 @@ function viecLam(url, i, report, next) {
                     urls.push($(this).children('div').first().children('a').attr('href'));
                 }
             });
-            if (check.length == 100) {
-                console.log(urls.length);//889 - 883
+            if (check.length == MAX) {
+                console.log(urls.length);
                 report['number_url'] = urls.length;
                 for (var i = 0; i < urls.length; i++) {
                     getLinks(urls[i], report, urls, next);
@@ -101,7 +102,7 @@ module.exports = {
             page: 'vietnamworks'
         };
         var url = 'http://www.vietnamworks.com/it-hardware-networking-it-software-jobs-i55,35-en/page-';
-        for (var u = 0; u < 100; u++) {
+        for (var u = 0; u < MAX; u++) {
             viecLam(url, u, report, next);
         }
     }
