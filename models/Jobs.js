@@ -1,6 +1,3 @@
-/**
- * Created by khietnguyen on 10/26/15.
- */
 var mongoose = require('mongoose');
 
 var JobSchema = new mongoose.Schema({
