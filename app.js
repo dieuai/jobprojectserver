@@ -28,12 +28,7 @@ app.use(cookieParser());
 app.use(cors());
 
 try {
-    //app.use('/',vieclam24h);
-    app.use('/',timviecnhanh);
-    app.use('/',query);
     app.use('/',careerbuilder);
-    app.use('/',mywork);
-    //app.use('/',vietnamworks);
     app.use('/',intership);
 }
 catch (err) {
@@ -113,6 +108,10 @@ function autoCrawler(){
 
             function (next){
                 mywork.mywork(next);
+            },
+            
+            function(next){
+                query.checkDuplicate(next);
             }
         ]);
     }
