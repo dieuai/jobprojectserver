@@ -58,6 +58,5 @@ module.exports = {
             result = hours.toFixed(0) +' giờ '+ minute.toFixed(0)+' phút';
             return result;
         }
-
     }
 };
