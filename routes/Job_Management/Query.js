@@ -4,36 +4,7 @@ var Job = require('../../models/Jobs');
 var support_function = require('../../support_function/support_function');
 var fs = require('fs');
 
-router.post('/getAllJobs', function (req, res) {
-    Job.find().sort({author: 1}).exec(function (err, data) {
-        res.send(data);
-    })
-});
-
-router.post('/getWithLocation', function (req, res) {
-    Job.find({location: req.body.location}).lean().exec(function (err, data) {
-        res.send(data);
-    })
-});
-
-checkDuplicateAuthor();
-
-function checkDuplicateAuthor() {
-    Job.find()
-        .lean()
-        .distinct('author')
-        .exec(function (err, author) {
-            if (author.length > 0) {
-                for (var j = 0; j < author.length; j++) {
-                    if(author[j] != null || author[j] != ''){
-                        checkDuplicateJob(author[j]);
-                    }
-                }
-            }
-        })
-}
-
-function checkDuplicateJob(authors) {
+function checkDuplicateJob(authors, next) {
     Job.find({author: authors})
         .lean()
         .sort({job: 1})
@@ -51,6 +22,7 @@ function checkDuplicateJob(authors) {
                                                 .exec(function (err, data) {
                                                     if (err) console.log(err);
                                                     console.log('1');
+                                                    next();
                                                 })
                                         }
                                     }
@@ -64,6 +36,7 @@ function checkDuplicateJob(authors) {
                                                         .remove()
                                                         .exec(function (err, data) {
                                                             if (err) console.log(err);
+                                                            next();
                                                         })
                                                 }
                                                 else if (job_temp[l].page.indexOf(job_temp[l + 1].page) == -1) {
@@ -82,6 +55,7 @@ function checkDuplicateJob(authors) {
                                                                         .exec(function (err, data) {
                                                                             if (err) console.log(err);
                                                                             console.log(data);
+                                                                            next();
                                                                         })
                                                                 }
                                                             }
@@ -108,4 +82,19 @@ function compare(a, b) {
     return 0;
 }
 
-module.exports = router;
+module.exports = {
+    checkDuplicate: function(next){
+        Job.find()
+        .lean()
+        .distinct('author')
+        .exec(function (err, author) {
+            if (author.length > 0) {
+                for (var j = 0; j < author.length; j++) {
+                    if(author[j] != null || author[j] != ''){
+                        checkDuplicateJob(author[j], next);
+                    }
+                }
+            }
+        })
+    }
+};
