@@ -12,8 +12,7 @@ LogSchema.index(
     {
         "page" : 1,
         "date": -1
-    },
-    {
+    },{
         name:'myJob'
     });
 
