@@ -256,7 +256,7 @@ function getLinks(url, report, next) {
 
 module.exports = {
     vieclam24h: function (next) {
-        console.log('2');
+        console.log('Đang lấy dữ liệu trang vieclam24h');
         var report = {
             page: 'vieclam24h'
         };
