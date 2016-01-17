@@ -91,13 +91,13 @@ io.on('connection', function (socket) {
 
 http.listen(process.env.PORT || 5000);
 
-// setInterval(function(){
+setInterval(function(){
     autoCrawler();
-// }, 60000);
+}, 60000);
 
 function autoCrawler(){
     var date = new Date();
-    // if(date.getHours() == 22 && date.getMinutes() == 34){
+    if(date.getHours() == 22 && date.getMinutes() == 34){
         async.waterfall([
             function (next){
                 vietnamworks.vietnamworks(next);
@@ -115,7 +115,7 @@ function autoCrawler(){
                 mywork.mywork(next);
             }
         ]);
-    // }
+    }
 };
 
 module.exports = app;
