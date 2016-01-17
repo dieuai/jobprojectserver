@@ -97,7 +97,7 @@ function getLinks(url, report, urls, next) {
 
 module.exports = {
     vietnamworks: function (next) {
-        console.log('1');
+        console.log('Đang lấy dữ liệu trang vietnamworks');
         var report = {
             page: 'vietnamworks'
         };
